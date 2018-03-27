@@ -1,0 +1,105 @@
+<html>
+  <head>
+    <title>PadLok</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="https://cdn.glitch.com/4cf57499-9109-4f01-8d88-39dbe4398ebb%2FPadLok%20New%20NoBG.PNG?1522085895493" type="image/png">
+    <link rel="apple-touch-icon" href="https://cdn.glitch.com/4cf57499-9109-4f01-8d88-39dbe4398ebb%2FPadLok%20New%20NoBG.PNG?1522085895493" type="image/png">
+    <link id="favicon" rel="icon" href="https://cdn.glitch.com/4cf57499-9109-4f01-8d88-39dbe4398ebb%2FPadLok%20New%20NoBG.PNG?1522085895493" type="image/png">
+    <meta charset="utf-8">
+    <meta name="theme-color" content="#222">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <div id="top">
+      <i class="material-icons menu-btn" onclick="openMenu()">menu</i>
+      <div id="menu">
+        <a class="menu-item" onclick="closeMenu(); $('#content').animate({scrollTop: window.innerHeight*0.89*0}, 1000)">
+          HOME
+        </a>
+        <a class="menu-item command-link" onclick="closeMenu(); $('#content').animate({scrollTop: window.innerHeight*0.89*1}, 1000)">
+          ABOUT
+        </a>
+        <a class="menu-item command-link" onclick="closeMenu(); $('#content').animate({scrollTop: window.innerHeight*0.89*2}, 1000)">
+          COMMANDS
+        </a>
+        <a class="menu-item command-link" href="dashboard">
+          DASHBOARD
+        </a>
+        </div>
+      <div id="menushade" onclick="closeMenu()"></div>
+      <div class="logo-cont top-logo" onclick="$('#content').animate({scrollTop: window.innerHeight*0}, 1000)">
+        <div class="logo-bg">
+          <i class="logo-lock material-icons">lock</i>
+        </div>
+      </div>
+    </div>
+    <div id="content">
+      <div class="home">
+        <a name="home"></a>
+        <div class="logo-cont home-logo">
+          <div class="logo-bg">
+            <i class="logo-lock material-icons">lock</i>
+          </div>
+        </div>
+        <a class="addtoserver" onclick="window.open('https://discordapp.com/api/oauth2/authorize?client_id=426492316560130059&permissions=2146958455&scope=bot')">Invite PadLok</a>
+      </div>
+      <div style="width: calc(100% - 2vw); padding: 1vh 1vw; height: 87vh">
+        <a name="about"></a>
+        <h1>
+          About
+        </h1>
+        <p>
+          PadLok is an all-in-one moderation bot for Discord, it has <a onclick="$('#content').animate({scrollTop: window.innerHeight*0.89*2}, 1000)" style="cursor: pointer;">many features</a> such as a swearing blocker.
+        </p>
+      </div>
+      <div id="commands" style="width: calc(100% - 2vw); padding: 1vh 1vw; min-height: 87vh">
+        <a name="cmds"></a>
+        <h1>
+          Commands
+        </h1>
+        <div class="commands">
+          <div class="command">
+            <p class="command-title">
+              p#help
+            </p>
+            <p class="command-description">
+              Lists commands and descriptions
+            </p>
+          </div>
+          <div class="command">
+            <p class="command-title">
+              p#settings
+            </p>
+            <p class="command-description">
+              Change PadLok's settings for the current server
+            </p>
+          </div>     
+          <div class="command">
+            <p class="command-title">
+              p#announce
+            </p>
+            <p class="command-description">
+              Send an announcement to the whole server
+            </p>
+          </div>     
+        </div>
+      </div>
+    </div>
+    <script>
+      function openMenu() {
+        document.getElementById("menu").style.left = 0;
+        document.getElementById("menushade").style.display = "block";
+        setTimeout(function() {document.getElementById("menushade").style.opacity = "0.5";}, 1);
+      }
+      function closeMenu() {
+        document.getElementById("menu").style.left = "-80vw";
+        document.getElementById("menushade").style.opacity = "0";
+        setTimeout(function() {document.getElementById("menushade").style.display = "none";}, 500);
+      }
+    </script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="client.js"></script>
+  </body>
+</html>
