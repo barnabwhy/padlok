@@ -1,0 +1,159 @@
+<html>
+  <head>
+    <title>PadLok - Dashboard</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="https://cdn.glitch.com/4cf57499-9109-4f01-8d88-39dbe4398ebb%2FPadLok%20New%20NoBG.PNG?1522085895493" type="image/png">
+    <link rel="apple-touch-icon" href="https://cdn.glitch.com/4cf57499-9109-4f01-8d88-39dbe4398ebb%2FPadLok%20New%20NoBG.PNG?1522085895493" type="image/png">
+    <link id="favicon" rel="icon" href="https://cdn.glitch.com/4cf57499-9109-4f01-8d88-39dbe4398ebb%2FPadLok%20New%20NoBG.PNG?1522085895493" type="image/png">
+    <meta charset="utf-8">
+    <meta name="theme-color" content="#222">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      * {
+        user-select: none; 
+      }
+    </style>
+  </head>
+  <body onload="checkCookie()">
+    <div id="guilds" style="position: fixed; top: 50%; transform: translateY(-50%); left: 12vw; width: 48vw; display: flex; flex-wrap: wrap;"></div>
+    <div id="settings" style="position:fixed;top:0;left:0;display:none;background:#23272A;width:100%;height:100%;z-index:10;">
+      <i style="position: absolute; top: 2vw; right: 2vw; font-size: 2.5vw; cursor: pointer;" onclick="$('#settings').css({display: `none`});" class="material-icons">close</i>
+      <div id="settings-top"></div>
+      <div id="settings-content" style="position: absolute; top: 6.5vw; left: 1vw;">
+        <h3 style="margin: 1vw 2vw 0.5vw 0;">
+          Modules
+        </h3>
+        <label class="switch">
+          <p>Block Swearing</p>
+          <input type="checkbox" id="swearing">
+          <span class="slider round"></span>
+        </label><br><br>
+        <label class="switch">
+          <p>Mute Command</p>
+          <input type="checkbox" id="mute">
+          <span class="slider round"></span>
+        </label><br><br>
+        <button onclick="submit()" class="submit">
+          SAVE
+        </button>
+        <p id="status" style="opacity: 0; transition: 0.3s opacity; color: #5c80bc">Success, this may take up to 5 seconds to take effect</p>
+      </div>
+    </div>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script>
+      function setCookie(cname,cvalue,exdays) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays*24*60*60*1000));
+        var expires = "expires=" + d.toGMTString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+      }
+
+      function getCookie(cname) {
+          var name = cname + "=";
+          var decodedCookie = decodeURIComponent(document.cookie);
+          var ca = decodedCookie.split(';');
+          for(var i = 0; i < ca.length; i++) {
+              var c = ca[i];
+              while (c.charAt(0) == ' ') {
+                  c = c.substring(1);
+              }
+              if (c.indexOf(name) == 0) {
+                  return c.substring(name.length, c.length);
+              }
+          }
+          return "";
+      }
+      
+      var guilds=getParameterByName("guilds");
+      function checkCookie() {
+          var token=getCookie("access_token");
+          if (token != "") {
+            if(getParameterByName('guilds') == null || getParameterByName("time") < Math.round((new Date()).getTime() / 1000)-2) {
+              location.href="/guilds?access_token="+token;
+            }
+            guilds = getParameterByName("guilds");
+            if (history.pushState) {
+              var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+              window.history.pushState({path:newurl},'',newurl);
+            }
+            var owned_guilds = JSON.parse(guilds).filter(function(a){return a.owner === true});
+            owned_guilds.map(function(guild){
+              if(guild.icon == null) {
+                if(guild.name.includes(" "))
+                  return $("#guilds").html($("#guilds").html()+"<div style='margin: 1vw; width: 10vw; height: 10vw; border-radius: 50%; background: #2C2F33' onclick='setGuild(`"+guild.id+"`)'><p style='position: relative; font-size: 3vw; top: 20%; text-align: center; transform: translateY(-50%);'>"+guild.name.split(" ").map(function(a) {return a.charAt(0)}).join(""))+"</p></div>"
+                return $("#guilds").html($("#guilds").html()+"<div style='margin: 1vw; width: 10vw; height: 10vw; border-radius: 50%; background: #2C2F33' onclick='setGuild(`"+guild.id+"`)'><p style='position: relative; font-size: 3vw; top: 20%; text-align: center; transform: translateY(-50%);'>"+guild.name.split("-").map(function(a) {return a.charAt(0)}).join("-"))+"</p></div>"
+                }
+              return $("#guilds").html($("#guilds").html()+'<img style="background: #2C2F33; border-radius: 50%; height: 10vw; width: 10vw; margin: 1vw" src="https://cdn.discordapp.com/icons/'+guild.id+'/'+guild.icon+'.png" onclick="setGuild(`'+guild.id+'`)" />')
+            })
+          } else {
+             token = getParameterByName('access_token');
+             if (token == null) {
+               location.href = "https://discordapp.com/api/oauth2/authorize?client_id=426492316560130059&redirect_uri=https%3A%2F%2Fpadlok.glitch.me%2Fauth&response_type=code&scope=identify%20guilds";
+             }
+             if (token != "" && token != null) {
+                 setCookie("access_token", token, 7);
+             }
+          }
+      }
+      
+      function getParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+      }
+      var guildId;
+      
+      function setGuild(id) {
+        $.ajax({
+          url: '/onServer?guild='+id,
+          type: 'GET'
+        })
+        .done(function( data ) {
+          if(data == "true") {
+            guildId = id;
+            var guild = JSON.parse(guilds).filter(function(a) {return a.id == id})[0];
+            $("#settings").css({display: "block"});
+            $("#settings-top").html("<h1 style='position: absolute; top: 2vw; font-size: 2.5vw; transform: translateY(-50%); left: 7vw;'>"+guild.name+"</h1>"+getIcon(guild));
+          } else {
+            location.href = 'https://discordapp.com/api/oauth2/authorize?client_id=426492316560130059&permissions=2146958455&scope=bot&guild_id='+id;
+          }
+        });
+      }
+      
+      function getIcon(guild) {
+        if(guild.icon == null) {
+          return "<div style='background: #2C2F33; border-radius: 50%; position: absolute; top: 1vw; left: 1vw; height: 5vw; width: 5vw;'><p style='position: relative; font-size: 1.5vw; top: 20%; text-align: center; transform: translateY(-50%);'>"+guild.name.charAt(0)+"</p></div>"
+        }
+        return "<img style='background: #2C2F33; border-radius: 50%; position: absolute; top: 1vw; left: 1vw; height: 5vw; width: 5vw;' src='https://cdn.discordapp.com/icons/"+guild.id+"/"+guild.icon+".png' />"
+      }
+      
+      function submit() {
+        $.ajax({
+          url: 'https://discordapp.com/api/users/@me',
+          type: 'GET',
+          beforeSend: function (xhr) {
+              xhr.setRequestHeader('Authorization', 'Bearer '+getCookie("access_token"));
+          }
+        })
+        .done(function( data ) {
+          //alert( "Data Loaded: " + data.id );
+          $.post( "/changesettings", { "user": data.id, "token": getCookie("access_token"), "guild": guildId, "swearing": $("#swearing").is(":checked"), "mute": $("#mute").is(":checked")})
+          .done(function( data ) {
+            //alert( "Data Loaded: " + data );
+            $("#status").css({opacity:"1"});
+            setTimeout(function() { 
+              $("#status").css({opacity:"0"});
+            }, 2500);
+          });
+        });
+        
+      }
+    </script>
+  </body>
+</html>
